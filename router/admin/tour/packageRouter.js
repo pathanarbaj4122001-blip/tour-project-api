@@ -3,10 +3,10 @@ const { verifyToken } = require("../../../middleware/jwt");
 const {
   GetTourPackage,
   SingleTourPackage,
-  CreateTourPackage,
   UpdateTourPackage,
   DeleteTourPackage,
-} = require("../../../controller/tour/packageController");
+  CreateTourPackage,
+} = require("../../../controller/tour/packagesController");
 
 const TourPackageRouter = express.Router();
 
