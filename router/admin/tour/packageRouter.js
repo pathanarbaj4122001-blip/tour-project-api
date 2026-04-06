@@ -6,7 +6,7 @@ const {
   CreateTourPackage,
   UpdateTourPackage,
   DeleteTourPackage,
-} = require("../../../controller/Tour/PackageController");
+} = require("../../../controller/tour/packageController");
 
 const TourPackageRouter = express.Router();
 
