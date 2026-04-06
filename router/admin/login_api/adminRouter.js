@@ -2,7 +2,6 @@ const express = require("express")
 const { Postlogin, CheckAuth } = require("../../../controller/login/adminController")
 const {verifyToken} = require("../../../middleware/jwt")
 
-
 const AdminRouter = express.Router()
 
 AdminRouter.post("/", Postlogin)

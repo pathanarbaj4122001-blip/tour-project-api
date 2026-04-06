@@ -1,5 +1,5 @@
 const express = require("express");
-const AdminRouter = require("./login/adminRouter");
+const AdminRouter = require("./login_api/adminRouter");
 const TourPackageRouter = require("./tour/packageRouter");
 const HighlightRouter = require("./tour/highlightRouter");
 const CountryRouter = require("./tour/countryRouter");
