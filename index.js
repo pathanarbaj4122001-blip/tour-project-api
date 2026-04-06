@@ -17,7 +17,9 @@ app.use(express.urlencoded({extended : false}))
 
 // cookies
 app.use(cors({
-  origin: "http://localhost:5173", 
+  origin: process.env.NODE_ENV === 'production' 
+    ? "https://your-frontend-url.vercel.app" // Apne live frontend ka URL yahan dalein
+    : "http://localhost:5173", 
   credentials: true
 }));
 app.use(cookieParser());
@@ -25,6 +27,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/admin", admin)
 
-app.listen(process.env.PORT, ()=>{
+const port = process.env.PORT || 4000;
+app.listen(port, ()=>{
   console.log(`server started = ${process.env.PORT}` );
 })
