@@ -1,4 +1,4 @@
-const pool = require("../../config/db"); // PostgreSQL pool
+const pool = require("../../config/db"); 
 
 // GET all tour packages
 exports.GetTourPackage = async (req, res) => {
