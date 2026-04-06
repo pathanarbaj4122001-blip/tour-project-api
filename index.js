@@ -17,17 +17,21 @@ app.use(express.urlencoded({extended : false}))
 
 // cookies
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? "https://your-frontend-url.vercel.app" // Apne live frontend ka URL yahan dalein
-    : "http://localhost:5173", 
+  origin: "http://localhost:5173", 
   credentials: true
 }));
+
+// app.use(cors({
+//   origin: process.env.NODE_ENV === 'production' 
+//     ? "https://your-frontend-url.vercel.app" // Apne live frontend ka URL yahan dalein
+//     : "http://localhost:5173", 
+//   credentials: true
+// }));
 app.use(cookieParser());
 // cookies
 
 app.use("/api/v1/admin", admin)
 
-const port = process.env.PORT || 4000;
-app.listen(port, ()=>{
+app.listen(process.env.PORT, ()=>{
   console.log(`server started = ${process.env.PORT}` );
 })
