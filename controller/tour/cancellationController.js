@@ -1,90 +1,86 @@
-const db = require("../../config/db");
+const pool = require("../../config/db");
 
-exports.GetCancellation = (req, res) => {
-  const packageId = req.params.id;
-  const Alldata =
-    "SELECT * FROM tbl_tour_cancellation WHERE package_id = ? ORDER BY id DESC";
-
-  db.query(Alldata, [packageId], (err, data) => {
-    if (err) return res.status(500).json({ message: err.message });
-
-    if (data.length === 0) {
-      return res.status(200).json([]);
-    }
-    res.status(200).json(data);
-  });
-};
-
-exports.CreateCancellation = (req, res) => {
+// GET: Package ID ke basis par saare cancellation policies lana
+exports.GetCancellation = async (req, res) => {
   try {
     const packageId = req.params.id;
-    let { cancellation_name	} = req.body || {};
-
-    if (!cancellation_name		) {
-      return res.status(400).json({
-        message: "Required fields are missing",
-      });
-    }
-
-    const insertQuery = `INSERT INTO tbl_tour_cancellation (
-        package_id, cancellation_name
-      ) VALUES (
-        ?, ?
-      )`;
-
-    db.query(insertQuery, [packageId, cancellation_name], (err, result) => {
-      if (err) return res.status(500).json({ message: err.message });
-
-      return res.status(201).json({
-        message: "Created successfully",
-        insertId: result.insertId,
-      });
-    });
+    const query = `SELECT * FROM tbl_tour_cancellation WHERE package_id = $1 ORDER BY id DESC`;
+    
+    const { rows } = await pool.query(query, [packageId]);
+    res.status(200).json(rows);
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
-exports.UpdateCancellation = (req, res) => {
+// POST: Nayi cancellation policy create karna
+exports.CreateCancellation = async (req, res) => {
+  try {
+    const packageId = req.params.id;
+    const { cancellation_name } = req.body;
+
+    if (!cancellation_name) {
+      return res.status(400).json({ message: "Required fields are missing" });
+    }
+
+    const query = `
+      INSERT INTO tbl_tour_cancellation (package_id, cancellation_name)
+      VALUES ($1, $2)
+      RETURNING id
+    `;
+
+    const { rows } = await pool.query(query, [packageId, cancellation_name]);
+    res.status(201).json({
+      message: "Created successfully",
+      insertId: rows[0].id,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// PUT: Specific ID (policy ID) ke basis par update karna
+exports.UpdateCancellation = async (req, res) => {
   try {
     const id = req.params.id;
-    let { cancellation_name } = req.body || {};
+    const { cancellation_name } = req.body;
 
-    const updateQuery = `
-        UPDATE tbl_tour_cancellation SET           
-         cancellation_name = ?     
-        WHERE id = ?
-      `;
+    if (!cancellation_name) {
+      return res.status(400).json({ message: "Required fields are missing" });
+    }
 
-    db.query(updateQuery, [cancellation_name, id], (err3, result3) => {
-      if (err3) return res.status(500).json({ message: err3.message });
+    const query = `
+      UPDATE tbl_tour_cancellation
+      SET cancellation_name = $1
+      WHERE id = $2
+      RETURNING id
+    `;
 
-      return res.status(200).json({
-        message: "Updated successfully",
-      });
-    });
+    const { rows } = await pool.query(query, [cancellation_name, id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Cancellation policy not found" });
+    }
+
+    res.status(200).json({ message: "Updated successfully" });
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
-exports.DeleteCancellation = (req, res) => {
-  const { id } = req.params;
-  const getQuery = "DELETE FROM tbl_tour_cancellation WHERE id = ?";
+// DELETE: Specific ID ke basis par delete karna
+exports.DeleteCancellation = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const query = `DELETE FROM tbl_tour_cancellation WHERE id = $1 RETURNING id`;
 
-  db.query(getQuery, [id], (err, result) => {
-    if (err) return res.status(500).json({ message: err.message });
+    const { rows } = await pool.query(query, [id]);
 
-    if (result.length === 0) {
-      return res.status(404).json({ message: "not found" });
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Record not found" });
     }
-
-    res.status(200).json({
-      message: "Deleted successfully",
-    });
-  });
+    res.status(200).json({ message: "Deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
