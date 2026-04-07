@@ -17,7 +17,10 @@ app.use(express.urlencoded({extended : false}))
 
 // cookies
 app.use(cors({
-  origin: "http://localhost:5173", 
+  origin: [
+    "https://tour-project-dashboard.vercel.app", 
+    "http://localhost:5173"                      
+  ],
   credentials: true
 }));
 
