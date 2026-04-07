@@ -35,13 +35,21 @@ exports.Postlogin = async (req, res) => {
       { expiresIn: process.env.TOKEN_EXPIREIN }
     );
 
-    // TOKEN COOKIE ME SAVE
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+        //  LIVE TOKEN COOKIE ME SAVE
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: true,      
+          sameSite: "none",  
+          maxAge: 24 * 60 * 60 * 1000,
+        });
+
+    // LOCAL TOKEN COOKIE ME SAVE
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: "lax",
+    //   maxAge: 24 * 60 * 60 * 1000,
+    // });
 
     res.status(200).json({
       message: "Admin Successfully Login",
